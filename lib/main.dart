@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image/image.dart' as IMG;
 import 'package:tflite/tflite.dart';
-import 'camera_page.dart'; // Assuming this is your own file
+import 'camera_page.dart';
+import 'gettingstarted.dart'; // Assuming this is your own file
 
 void loadDetectionModel() async {
   Tflite.close();
@@ -113,7 +114,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: CameraPage(),
+      home: GettingStarted(),
     );
   }
 }
