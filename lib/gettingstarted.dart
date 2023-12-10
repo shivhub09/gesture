@@ -1,6 +1,12 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gesture/camera_page.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image/image.dart' as IMG;
+import 'package:tflite/tflite.dart';
 
 class GettingStarted extends StatelessWidget {
   const GettingStarted({super.key});
@@ -25,37 +31,77 @@ class GettingStarted extends StatelessWidget {
                 ),
               )),
           Positioned(
-              left: 0,
-              right: 0,
-              top: 0,
-              bottom: 0,
-              child: Center(
-                  child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => CameraPage()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey, // Background color
-                  foregroundColor: Colors.black, // Text color
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 30, vertical: 15), // Button padding
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(10), // Button border radius
+            left: 20,
+            right: 20,
+            top: 0,
+            bottom: 0,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // first better
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => CameraScreen()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey, // Background color
+                      foregroundColor: Colors.black, // Text color
+                      padding: EdgeInsets.symmetric(
+                          vertical: 15, horizontal: 15), // Button padding
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(10), // Button border radius
+                      ),
+                      elevation: 3, // Button shadow
+                    ),
+                    child: Text(
+                      'Detect Your Sign!',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                      ), // Text style
+                    ),
                   ),
-                  elevation: 3, // Button shadow
-                ),
-                child: Text(
-                  'Detect!',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                  ), // Text style
-                ),
-              ))),
+
+                  SizedBox(
+                    height: 20,
+                  ),
+                  // second button
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => CameraScreen()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey, // Background color
+                      foregroundColor: Colors.black, // Text color
+                      padding: EdgeInsets.symmetric(
+                          vertical: 15, horizontal: 15), // Button padding
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(10), // Button border radius
+                      ),
+                      elevation: 3, // Button shadow
+                    ),
+                    child: Text(
+                      'Detect Your Voice!',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                      ), // Text style
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
           Positioned(
               bottom: 0,
               left: 0,
