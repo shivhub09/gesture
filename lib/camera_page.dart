@@ -1,14 +1,8 @@
-import 'dart:ui';
-
-import 'dart:typed_data';
 import 'dart:async';
-import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image/image.dart' as IMG;
-import 'package:native_screenshot/native_screenshot.dart';
-import 'package:tflite/tflite.dart';
+
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({Key? key}) : super(key: key);
