@@ -1,8 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
 
+// Replace with your API URL
+const String apiUrl = "http://192.168.189.65:8080/check_image";
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({Key? key}) : super(key: key);
@@ -12,19 +16,14 @@ class CameraScreen extends StatefulWidget {
 }
 
 class _CameraScreenState extends State<CameraScreen> {
-  bool _recording = false;
+  bool _isCapturing = false; // Flag to control capture loop
   bool _initialized = true;
   int currentCamera = 0;
   late CameraController _controller;
   late List<CameraDescription> cameras;
+  late Future<void> _initializeControllerFuture;
 
-  late Timer timer;
-  String output = "";
-  String prevOutput = "";
   String translation = "";
-  double confidenceScore = 0.0;
-  Color boxColor = Colors.black;
-  bool steadyTextDisplay = false;
 
   @override
   void initState() {
@@ -39,35 +38,50 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 
   // Set up the camera
-  _cameraSetUp() async {
+  Future<void> _cameraSetUp() async {
     cameras = await availableCameras();
-    _controller = CameraController(cameras[0], ResolutionPreset.max);
-    await _controller.initialize();
+    _controller = CameraController(cameras[0], ResolutionPreset.medium);
+    _initializeControllerFuture = _controller.initialize();
     setState(() => _initialized = false);
   }
 
-  // Switch between front and back camera
-  void switchCamera() async {
-    if (cameras.length > 1) {
-      _controller = CameraController(
-          currentCamera == 0 ? cameras[1] : cameras[0], ResolutionPreset.max);
-      await _controller.initialize();
-      setState(() => currentCamera = currentCamera == 0 ? 1 : 0);
+  Future<void> takePicture() async {
+    // Wait for the camera to be initialized before proceeding
+    await _initializeControllerFuture;
+    try {
+      final image = await _controller.takePicture();
+      // Send captured image to API
+      await sendImageToApi(image.path);
+    } catch (e) {
+      print(e);
     }
   }
 
-  // Start or stop recording
-  _recordVideo() async {
-    if (_recording) {
-      setState(() {
-        _recording = false;
-      });
+  Future<void> sendImageToApi(String imagePath) async {
+    print("api called");
+    var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
+
+    // Await the creation of the MultipartFile and then add it to the request
+    final imageFile = await http.MultipartFile.fromPath('image', imagePath);
+    request.files.add(imageFile);
+
+    var response = await request.send();
+
+    // Handle API response (check status code, parse JSON, etc.)
+    if (response.statusCode == 200) {
+      print('Image sent successfully!');
     } else {
-      setState(() {
-        _recording = true;
-      });
-      translation = "";
+      print('Error sending image: ${response.reasonPhrase}');
     }
+  }
+
+  void startCapture() {
+    _isCapturing = true;
+    Timer.periodic(Duration(seconds: 2), (_) => takePicture());
+  }
+
+  void stopCapture() {
+    _isCapturing = false;
   }
 
   @override
@@ -88,47 +102,33 @@ class _CameraScreenState extends State<CameraScreen> {
                 child: Text(
                   "Detect your Sign!!",
                   style: GoogleFonts.montserrat(
-                      fontSize: 20, color: Colors.grey.shade50),
+                    fontSize: 20,
+                    color: Colors.grey.shade50,
+                  ),
                 ),
               ),
             ),
 
-            // camera
+            // Camera preview
             Center(
-                child: Container(
-                    padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                    child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: CameraPreview(_controller)))),
+              child: Container(
+                padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: CameraPreview(_controller),
+                ),
+              ),
+            ),
 
-            // 
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: EdgeInsets.only(bottom: 25.0),
-                child: GestureDetector(
-                  onTap: () {
-                    _recordVideo();
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: _recording ? Colors.white : Colors.grey,
-                      borderRadius: BorderRadius.circular(50),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
-                          blurRadius: 6,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Icon(
-                      _recording ? Icons.pause_rounded : Icons.circle,
-                      color: _recording ? Colors.red : Colors.white,
-                      size: 40,
-                    ),
-                  ),
+            // Capture controls
+            Positioned(
+              bottom: 20,
+              left: 20,
+              child: FloatingActionButton(
+                onPressed: _isCapturing ? stopCapture : startCapture,
+                child: Icon(
+                  _isCapturing ? Icons.pause : Icons.camera_alt,
+                  color: Colors.white,
                 ),
               ),
             ),
