@@ -1,14 +1,9 @@
-import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gesture/camera_page.dart';
 import 'package:gesture/record_page.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image/image.dart' as IMG;
-import 'package:tflite/tflite.dart';
-
 class GettingStarted extends StatelessWidget {
   const GettingStarted({super.key});
 

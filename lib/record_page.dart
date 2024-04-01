@@ -14,7 +14,7 @@ class _RecordVoiceState extends State<RecordVoice> {
 
   @override
   void dispose() {
-    _speech.stop(); // Stop listening when the widget is disposed
+    _speech.stop(); 
     super.dispose();
   }
 
