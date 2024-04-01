@@ -1,12 +1,17 @@
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:gesture/camera_page.dart';
-import 'package:gesture/record_page.dart';
 import 'package:google_fonts/google_fonts.dart';
-class GettingStarted extends StatelessWidget {
+
+import '../../CameraPage/ui/CameraPage.dart';
+import '../../RecordPage/ui/RecordVoice.dart';
+
+class GettingStarted extends StatefulWidget {
   const GettingStarted({super.key});
 
+  @override
+  State<GettingStarted> createState() => _GettingStartedState();
+}
+
+class _GettingStartedState extends State<GettingStarted> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,19 +19,21 @@ class GettingStarted extends StatelessWidget {
       body: Stack(
         children: [
           Positioned(
-              top: 60,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: Text(
-                  "SignSense",
-                  style: GoogleFonts.montserrat(
-                      fontSize: 30,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black),
-                ),
-              )),
-          Positioned(
+            top: 60,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Text(
+                "SignSense",
+                style: GoogleFonts.montserrat(
+                    fontSize: 30,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black),
+              ),
+            ),
+          ),
+
+           Positioned(
             left: 20,
             right: 20,
             top: 0,
