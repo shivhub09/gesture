@@ -3,11 +3,17 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import tensorflow as tf
+import cv2
+import numpy as np
+import random  # for generating noise
 app = Flask(__name__)
 
 # Initialize drawing and holistic models
 mp_drawing = mp.solutions.drawing_utils
 mp_holistic = mp.solutions.holistic
+
+
+
 
 def process_image(image_bytes):
   # Read image from bytes
@@ -17,6 +23,7 @@ def process_image(image_bytes):
   all_landmarks_list = []
   # Process the image
   all_landmarks = []
+  
   with mp_holistic.Holistic(static_image_mode=True, min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
 
     results = holistic.process(image=img_rgb)
@@ -52,15 +59,18 @@ def process_image(image_bytes):
     print("padding")
     # Convert the list of landmarks to a TensorFlow tensor
     all_landmarks_tensor = tf.convert_to_tensor(padded_landmarks, dtype=tf.float32)
-
+    all_landmarks_tensor2 = [all_landmarks_tensor for _ in range(100)]
     print("Shape of all landmarks tensor before reshaping:", all_landmarks_tensor.shape)
 
     # Reshape the tensor to have shape (100, 1629)
-    all_landmarks_tensor_reshaped = tf.reshape(all_landmarks_tensor, (100, -1))
+    all_landmarks_tensor_reshaped = tf.reshape(all_landmarks_tensor2, (100, -1))
 
     print("Shape of all landmarks tensor after reshaping:", all_landmarks_tensor_reshaped.shape)
 
-    return jsonify({"Shape of all landmarks tensor before reshaping":all_landmarks_tensor.shape , "Shape of all landmarks tensor after reshaping:": all_landmarks_tensor_reshaped.shape})
+    # shape_before_reshaping = tuple(all_landmarks_tensor.shape.as_list())
+    # shape_after_reshaping = tuple(all_landmarks_tensor_reshaped.shape.as_list())
+
+    return all_landmarks_tensor_reshaped
 
 @app.route('/landmarks', methods=['POST'])
 def detect_landmarks():
@@ -72,7 +82,11 @@ def detect_landmarks():
   # Process image and get landmarks
   try:
     landmarks = process_image(image)
-    return jsonify(landmarks)
+    print(landmarks)
+    return jsonify({
+       "recived":"success",
+       "landmarks":landmarks.numpy().tolist()
+    })
   except Exception as e:
     return jsonify({'error': str(e)}), 500
 

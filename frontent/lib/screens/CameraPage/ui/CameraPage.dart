@@ -77,7 +77,7 @@ class _CameraScreenState extends State<CameraScreen> {
 
   void startCapture() {
     _isCapturing = true;
-    Timer.periodic(Duration(seconds: 2), (_) => takePicture());
+    Timer.periodic(Duration(seconds: 1), (_) => takePicture());
   }
 
   void stopCapture() {
