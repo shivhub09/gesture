@@ -101,10 +101,31 @@ def detect_landmarks():
 
 def check_image_received():
     """Checks if an image has been received in the request."""
-    if 'image' in request.files:
-        return jsonify({'message': 'Image received'}), 200
-    else:
-        return jsonify({'error': 'No image found in request'}), 400
+    # if 'image' in request.files:
+
+    #     return jsonify({'message': 'Image received'}), 200
+    # else:
+    #     return jsonify({'error': 'No image found in request'}), 400
+    if 'image' not in request.files:
+        return jsonify({'error': 'No image uploaded'}), 400
+    image = request.files['image'].read()
+
+    # Process image and get landmarks
+    try:
+        
+        landmarks = process_image(image)
+        output = prediction_fn(inputs=landmarks)
+        prediction_str = "".join([rev_character_map.get(s, "") for s in np.argmax(output[REQUIRED_OUTPUT], axis=1)])
+        print(prediction_str)
+
+        return jsonify({
+        "recived":"success",
+        "prediction":prediction_str
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+    
 
 @app.route('/check_image', methods=['POST'])
 def image_check():
