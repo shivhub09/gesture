@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
 // Replace with your API URL
-const String apiUrl = "http://192.168.189.65:8080/check_image";
+const String apiUrl = "http://192.168.185.65:8080/check_image";
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({Key? key}) : super(key: key);
@@ -23,6 +23,8 @@ class _CameraScreenState extends State<CameraScreen> {
 
   String predicted = 'Hello';
   bool _loading = false;
+  bool _isTimerActive = false;
+  late Timer _timer;
 
   @override
   void initState() {
@@ -33,6 +35,7 @@ class _CameraScreenState extends State<CameraScreen> {
   @override
   void dispose() {
     _controller.dispose();
+    _timer.cancel();
     super.dispose();
   }
 
@@ -45,6 +48,22 @@ class _CameraScreenState extends State<CameraScreen> {
       setState(() => _initialized = true);
     } catch (e) {
       print('Error initializing camera: $e');
+    }
+  }
+
+  void startStopTimer() {
+    setState(() {
+      _isTimerActive = !_isTimerActive;
+    });
+
+    if (_isTimerActive) {
+      _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+        if (_isTimerActive) {
+          takePicture();
+        }
+      });
+    } else {
+      _timer.cancel();
     }
   }
 
@@ -97,21 +116,66 @@ class _CameraScreenState extends State<CameraScreen> {
   Widget build(BuildContext context) {
     if (!_initialized) {
       return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          title: Center(
+            child: Text(
+              "Sign To Text",
+              style: GoogleFonts.montserrat(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30),
+            ),
+          ),
+        ),
         body: Center(
           child: CircularProgressIndicator(),
         ),
       );
     } else {
       return Scaffold(
-        backgroundColor: Colors.black,
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.white,
+          elevation: 0.0,
+          title: Padding(
+            padding: const EdgeInsets.only(top: 15.0),
+            child: Center(
+              child: Text(
+                "Sign To Text",
+                style: GoogleFonts.montserrat(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25),
+              ),
+            ),
+          ),
+        ),
+        backgroundColor: Colors.white,
         body: Stack(
           children: [
-            Center(
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: CameraPreview(_controller),
+            Positioned(
+              bottom: 175,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Container(
+                  margin: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        spreadRadius: 5,
+                        blurRadius: 7,
+                        offset: Offset(0, 3), // changes position of shadow
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: CameraPreview(_controller),
+                  ),
                 ),
               ),
             ),
@@ -120,14 +184,14 @@ class _CameraScreenState extends State<CameraScreen> {
                 child: CircularProgressIndicator(),
               ),
             Positioned(
-              bottom: 100,
+              bottom: 150,
               left: 20,
               right: 20,
               child: Center(
                 child: Text(
                   predicted,
                   style: GoogleFonts.montserrat(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontWeight: FontWeight.bold,
                     fontSize: 25,
                   ),
@@ -135,14 +199,14 @@ class _CameraScreenState extends State<CameraScreen> {
               ),
             ),
             Positioned(
-              bottom: 20,
+              bottom: 50,
               left: 20,
               right: 20,
               child: Center(
                 child: FloatingActionButton(
-                  backgroundColor: Colors.grey,
-                  onPressed: _loading ? null : takePicture,
-                  child: Icon(Icons.camera_alt),
+                  backgroundColor: _isTimerActive ? Colors.red : Colors.grey,
+                  onPressed: _loading ? null : startStopTimer,
+                  child: Icon(_isTimerActive ? Icons.stop : Icons.camera_alt),
                 ),
               ),
             ),

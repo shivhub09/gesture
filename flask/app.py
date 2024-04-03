@@ -66,7 +66,13 @@ def process_image(image_bytes):
     print("padding")
 
     all_landmarks_tensor = tf.convert_to_tensor(padded_landmarks, dtype=tf.float32)
+
+
+    #  imp line
     all_landmarks_tensor2 = [all_landmarks_tensor for _ in range(100)]
+
+
+    
     print("Shape of all landmarks tensor before reshaping:", all_landmarks_tensor.shape)
 
     # Reshape the tensor to have shape (100, 1629)
@@ -135,4 +141,4 @@ def image_check():
 
 
 if __name__ == '__main__':
-  app.run(debug=True, host="192.168.189.65", port=8080)
+  app.run(debug=True, host="192.168.185.65", port=8080)

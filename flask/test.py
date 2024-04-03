@@ -1,7 +1,7 @@
 import requests
 import json
 
-api_url = "http://192.168.189.65:8080/check_image"
+api_url = "http://192.168.185.65:8080/check_image"
 
 image_path = "WIN_20240402_18_44_47_Pro.jpg"
 
