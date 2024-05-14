@@ -32,8 +32,7 @@ class _GettingStartedState extends State<GettingStarted> {
               ),
             ),
           ),
-
-           Positioned(
+          Positioned(
             left: 20,
             right: 20,
             top: 0,
@@ -110,7 +109,7 @@ class _GettingStartedState extends State<GettingStarted> {
               left: 0,
               right: 0,
               child: Image.asset(
-                "assets/images.png",
+                "assets/image.png",
                 fit: BoxFit.cover,
               ))
         ],

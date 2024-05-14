@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
 // Replace with your API URL
-const String apiUrl = "http://192.168.185.65:8080/check_image";
+const String apiUrl = "http://192.168.59.65:8080/check_image";
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({Key? key}) : super(key: key);
