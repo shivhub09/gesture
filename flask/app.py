@@ -9,13 +9,29 @@ app = Flask(__name__)
 processor = AutoImageProcessor.from_pretrained("akahana/asl-vit")
 model = AutoModelForImageClassification.from_pretrained("akahana/asl-vit")
 
-def inference(image):
-    """Perform inference on the provided image."""
-    with torch.no_grad():
-        inputs = processor(image, return_tensors="pt")
-        logits = model(**inputs).logits
-        predicted_label = logits.argmax(-1).item()
-        return model.config.id2label[predicted_label]
+# def inference(image):
+#     """Perform inference on the provided image."""
+#     with torch.no_grad():
+#         inputs = processor(image, return_tensors="pt")
+#         logits = model(**inputs).logits
+#         print(logits)
+#         predicted_label = logits.argmax(-1).item()
+#         return model.config.id2label[predicted_label]
+import torch.nn.functional as F
+def inference(frame):
+  with torch.no_grad():
+    inputs = processor(frame, return_tensors="pt")
+    logits = model(**inputs).logits
+    print(logits)
+    
+    probabilities=F.softmax(logits, dim=-1)
+    predicted_label_idx = probabilities.argmax(-1).item()
+    high_prob= probabilities[0, predicted_label_idx].item()
+    print('Conf Score:',high_prob)
+    predicted_label = logits.argmax(-1).item()
+    # print(predicted_label)
+    # print(model.config.id2label[predicted_label])
+    return(model.config.id2label[predicted_label])
 
 def process_image(image_bytes):
     """Convert image bytes to a PIL image and process it."""
@@ -50,6 +66,7 @@ def image_check():
         # Process image and get prediction
         image = process_image(image_file)
         prediction = inference(image)
+        print(prediction)
         return jsonify({
             "received": "success",
             "prediction": prediction

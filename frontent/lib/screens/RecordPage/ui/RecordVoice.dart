@@ -14,7 +14,7 @@ class _RecordVoiceState extends State<RecordVoice> {
 
   @override
   void dispose() {
-    _speech.stop(); 
+    _speech.stop();
     super.dispose();
   }
 
@@ -88,7 +88,7 @@ class _RecordVoiceState extends State<RecordVoice> {
             left: 0,
             right: 0,
             child: Image.asset(
-              "assets/images.png", // Replace with your image asset
+              "assets/image.png", // Replace with your image asset
               fit: BoxFit.cover,
             ),
           ),

@@ -57,7 +57,7 @@ class _CameraScreenState extends State<CameraScreen> {
     });
 
     if (_isTimerActive) {
-      _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+      _timer = Timer.periodic(Duration(seconds: 4), (timer) {
         if (_isTimerActive) {
           takePicture();
         }
